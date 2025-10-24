@@ -26,25 +26,26 @@
         <p class="muted">For AI security research only. This page demonstrates a UI/provenance confusion where text in the address bar can be turned into trusted prompts if the <span class="mono">https://</span> prefix is removed.</p>
 
         <label for="payload" class="lbl">Payload</label>
-        <textarea id="payload" rows="4" spellcheck="false" placeholder="cmd: open https://example.com"></textarea>
+        <textarea id="payload" rows="4" spellcheck="false" placeholder="visit neuraltrust ai"></textarea>
 
         <div class="row gap">
-          <button id="activate" class="btn primary">Activate</button>
-          <button id="reset" class="btn">Reset URL</button>
-          <button id="copy" class="btn">Copy prompt text</button>
+          <button id="activate" class="btn primary">Generate URL</button>
+          <button id="reset" class="btn">Reset</button>
+          <button id="copy" class="btn">Copy prompt</button>
         </div>
 
         <div id="banner" class="banner hidden" role="status" aria-live="polite">
-          <div class="banner-title">Demo steps</div>
-          <ol class="steps">
-            <li>Click inside the browser’s address bar (omnibox).</li>
-            <li>Delete the leading <span class="mono">https://</span> from the visible text.</li>
-            <li>Press Enter to submit. The remaining text is treated as a prompt.</li>
-          </ol>
+          <div class="banner-title">Generated URL</div>
+          <p class="muted small">Copy the URL below. It inserts a small break in the scheme (e.g., <span class="mono">http::/ /</span>) to avoid auto-parsing while staying copyable.</p>
           <div class="preview">
-            <div class="preview-row"><span class="key">Visible text:</span> <span id="visibleText" class="mono"></span></div>
-            <div class="preview-row"><span class="key">Raw prompt:</span> <span id="rawPrompt" class="mono"></span></div>
+            <div class="preview-row"><span class="key">URL:</span> <span id="visibleText" class="mono"></span></div>
           </div>
+        </div>
+
+        <label for="obfuscated" class="lbl">Generated URL (copy)</label>
+        <input id="obfuscated" type="text" readonly class="mono" />
+        <div class="row gap">
+          <button id="copyObfuscated" class="btn">Copy generated URL</button>
         </div>
 
         <p class="muted small">Deep‑link support: use <span class="mono">?p=...</span> to prefill and <span class="mono">&auto=1</span> to auto‑activate.
