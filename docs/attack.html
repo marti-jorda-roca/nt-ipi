@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Omnibox Confused‑Deputy Attack – Write‑up</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="wrap">
+        <div class="brand">Omnibox Trust‑Confusion PoC</div>
+        <nav class="nav">
+          <a href="./index.html">Demo</a>
+        </nav>
+      </div>
+    </header>
+    <main class="wrap">
+      <section class="card">
+        <h1>Omnibox Confused‑Deputy / Provenance Bug</h1>
+        <p class="muted small">Condensed from <span class="mono">attack.md</span>. For research and education.</p>
+
+        <h2>Short answer</h2>
+        <p>The “omnibox” is the browser’s combined address/search bar. In Atlas, it serves as both the URL bar and a place to type prompts to the agent.</p>
+
+        <h2>What the attack is</h2>
+        <ul>
+          <li>Design choice: omnibox input is treated as trusted user intent. If it looks like a URL (<span class="mono">https://</span>), navigate; otherwise treat as a prompt with higher trust.</li>
+          <li>A page can change the visible URL via history APIs and display instructions that persuade the user to remove <span class="mono">https://</span> from the omnibox.</li>
+          <li>Once removed, the string is no longer a URL; Atlas interprets it as a trusted prompt and executes with fewer checks, bypassing page-origin safety.</li>
+        </ul>
+
+        <h2>Why it works</h2>
+        <ul>
+          <li>Confused-deputy/provenance bug combined with prompt injection.</li>
+          <li>Trust is tied to the input channel (omnibox) instead of the true source of the instruction.</li>
+          <li>By mutating the scheme, untrusted page text becomes “trusted” omnibox text.</li>
+        </ul>
+
+        <h2>Impact</h2>
+        <ul>
+          <li>Unwanted actions (searches, tool calls, navigation, other privileged operations).</li>
+          <li>Persists while malicious text remains in the omnibox.</li>
+        </ul>
+
+        <h2>Better fixes</h2>
+        <ul>
+          <li>Separate channels: distinct prompt box or explicit mode switch.</li>
+          <li>Preserve provenance: attach a source principal to instructions; page-derived text cannot inherit omnibox privileges.</li>
+          <li>No auto-prefill: don’t transform untrusted page data into the omnibox; block/warn on URL→text changes.</li>
+          <li>Explicit previews: show exact command with a “came from page X” indicator; require confirmation.</li>
+          <li>Safer routing: explicit prefixes (e.g., <span class="mono">cmd: …</span>) instead of fragile heuristics.</li>
+          <li>Capability-based policy: certain actions always require consent regardless of source.</li>
+        </ul>
+
+        <p class="muted">Use the <a href="./index.html">interactive demo</a> to see the UI confusion mechanism. Payloads are benign and for demonstration only.</p>
+      </section>
+    </main>
+    <footer class="footer">
+      <div class="wrap">
+        <span class="muted small">Research demo.</span>
+      </div>
+    </footer>
+  </body>
+  </html>
+
+
